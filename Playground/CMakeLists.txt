@@ -1,86 +1,86 @@
-cmake_minimum_required(VERSION 3.15.0 FATAL_ERROR)
+set(PROJECT_NAME Playground)
 
-set(CMAKE_SYSTEM_VERSION 10.0 CACHE STRING "" FORCE)
+set(Header_Files
+    "Macros.h"
+)
 
-project(Playground CXX)
+set(Header_Files__Compression
+    "Compression/PNGLoader.h"
+)
 
-################################################################################
-# Set target arch type if empty. Visual studio solution generator provides it.
-################################################################################
-if(NOT CMAKE_VS_PLATFORM_NAME)
-    set(CMAKE_VS_PLATFORM_NAME "x64")
-endif()
-message("${CMAKE_VS_PLATFORM_NAME} architecture in use")
+set(Header_Files__Compression__3rdParty
+    "Compression/3rdParty/lodepng.h"
+)
 
-if(NOT ("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64"
-     OR "${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86"))
-    message(FATAL_ERROR "${CMAKE_VS_PLATFORM_NAME} arch is not supported!")
-endif()
+set(Header_Files__FileUtils
+    "FileUtils/FileMacros.h"
+    "FileUtils/IFile.h"
+    "FileUtils/RawFile.h"
+)
 
-################################################################################
-# Global configuration types
-################################################################################
-set(CMAKE_CONFIGURATION_TYPES
-    "Debug"
-    "Release"
-    CACHE STRING "" FORCE
+set(Header_Files__RasterData
+    "RasterData/ColorSpace.h"
+    "RasterData/Image2d.h"
+    "RasterData/ImageLoader.h"
+    "RasterData/ImageUtils.h"
+)
+
+set(Header_Files__Utils
+    "Utils/IDataLoader.h"
+    "Utils/Logger.h"
+    "Utils/Random.h"
+)
+
+set(Source_Files__Compression
+    "Compression/PNGLoader.cpp"
+)
+
+set(Source_Files__Compression__3rdParty
+    "Compression/3rdParty/lodepng.cpp"
+)
+
+set(Source_Files__FileUtils
+    "FileUtils/IFile.cpp"
+    "FileUtils/RawFile.cpp"
+)
+
+set(Source_Files__RasterData
+    "RasterData/ColorSpace.cpp"
+    "RasterData/Image2d.cpp"
+    "RasterData/ImageLoader.cpp"
+    "RasterData/ImageUtils.cpp"
+)
+
+set(Source_Files__Utils
+    "Utils/Logger.cpp"
+)
+
+set(ALL_FILES
+    ${Header_Files}
+    ${Header_Files__Compression}
+    ${Header_Files__Compression__3rdParty}
+    ${Header_Files__FileUtils}
+    ${Header_Files__RasterData}
+    ${Header_Files__Utils}
+    ${Source_Files__Compression}
+    ${Source_Files__Compression__3rdParty}
+    ${Source_Files__FileUtils}
+    ${Source_Files__RasterData}
+    ${Source_Files__Utils}
+)
+
+set(Header_dirs
+        ${CMAKE_SOURCE_DIR}
+        Compression
+        Compression/3rdParty
+        FileUtils
+        RasterData
+        Utils
 )
 
 ################################################################################
-# Global compiler options
+# Target
 ################################################################################
-if(MSVC)
-    # remove default flags provided with CMake for MSVC
-    set(CMAKE_CXX_FLAGS "")
-    set(CMAKE_CXX_FLAGS_DEBUG "")
-    set(CMAKE_CXX_FLAGS_RELEASE "")
-endif()
+add_library(${PROJECT_NAME} ${ALL_FILES})
 
-################################################################################
-# Global linker options
-################################################################################
-if(MSVC)
-    # remove default flags provided with CMake for MSVC
-    set(CMAKE_EXE_LINKER_FLAGS "")
-    set(CMAKE_MODULE_LINKER_FLAGS "")
-    set(CMAKE_SHARED_LINKER_FLAGS "")
-    set(CMAKE_STATIC_LINKER_FLAGS "")
-    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS}")
-    set(CMAKE_MODULE_LINKER_FLAGS_DEBUG "${CMAKE_MODULE_LINKER_FLAGS}")
-    set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_SHARED_LINKER_FLAGS}")
-    set(CMAKE_STATIC_LINKER_FLAGS_DEBUG "${CMAKE_STATIC_LINKER_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS}")
-    set(CMAKE_MODULE_LINKER_FLAGS_RELEASE "${CMAKE_MODULE_LINKER_FLAGS}")
-    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS}")
-    set(CMAKE_STATIC_LINKER_FLAGS_RELEASE "${CMAKE_STATIC_LINKER_FLAGS}")
-endif()
-
-################################################################################
-# Nuget packages function stub.
-################################################################################
-function(use_package TARGET PACKAGE VERSION)
-    message(WARNING "No implementation of use_package. Create yours. "
-                    "Package \"${PACKAGE}\" with version \"${VERSION}\" "
-                    "for target \"${TARGET}\" is ignored!")
-endfunction()
-
-################################################################################
-# Common utils
-################################################################################
-include(CMake/Utils.cmake)
-
-################################################################################
-# Additional Global Settings(add specific info there)
-################################################################################
-include(CMake/GlobalSettingsInclude.cmake OPTIONAL)
-
-################################################################################
-# Use solution folders feature
-################################################################################
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-################################################################################
-# Sub-projects
-################################################################################
-add_subdirectory(Playground)
-
+target_include_directories(${PROJECT_NAME} PUBLIC ${Header_dirs})
